@@ -1,4 +1,4 @@
-# Medic to Medic Student Manager Server
+# Student Manager Server
 
 ## Running
 
