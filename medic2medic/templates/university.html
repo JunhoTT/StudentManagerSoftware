@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% raw %}
+<h4>Edit Uni details</h4>
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">University Details</a>
+    </div>
+</nav>
+
+<div class="tab-content" id="nav-tabContent">
+
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <br/>
+        <form id="editForm" @submit.prevent="processForm">
+            <div class="form-group row">
+                <label class="col-4 col-form-label">University Database ID</label>
+                <div class="col-8">
+                    <input id="id" name="id" type="text" class="form-control" v-model="uni.id" disabled="disabled">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="uni_name" class="col-4 col-form-label">University Name</label>
+                <div class="col-8">
+                    <input id="uni_name" name="uni_name" type="text" class="form-control" v-model="uni.uni_name">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="country" class="col-4 col-form-label">University Country</label>
+                <div class="col-8">
+                    <input id="country" name="country" type="text" class="form-control" v-model="uni.country">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <div class="offset-4 col-8">
+                    <button name="submit" type="submit" class="btn btn-primary">Update and Return</button>
+
+                    <button onclick="javascript:vm_uni.delete();" style="float:right" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endraw %}
+
+<script>
+    var uni = {
+        uni_name:'',
+        country: '',
+        id: '{{id}}'
+    };
+
+
+    var vm_uni = new Vue({
+        el : "#editForm",
+        data : {uni : uni},
+        methods : {
+            loadUni: async function() {
+                var vm = this;
+                await fetch("/university/{{id}}")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.uni = data;
+                    });
+            },
+            processForm: function () {
+                var vm = this;
+                var requestOptions = {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.uni)
+                };
+                fetch("/university/", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        vm.response = data;
+                        window.location.href = "/list/universities";
+                    });
+            },
+            delete: function () {
+                var vm = this;
+                var requestOptions = {
+                    method: "DELETE",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.uni)
+                };
+                fetch("/university/{{id}}", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        window.location.href = "/list/universities";
+                    });
+            }
+        }
+    });
+
+
+    main = async () => {
+        await vm_uni.loadUni();
+
+    }
+    main();
+
+</script>
+
+{% endblock %}

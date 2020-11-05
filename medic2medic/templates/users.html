@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% raw %}
+<h4>Users and Permissions</h4>
+<div id="vmUsers">
+    <table class="table">
+        <thead>
+        <tr>
+            <td>Email</td>
+            <td>Read</td>
+            <td>Write</td>
+            <td>Admin</td>
+            <td></td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="user in users">
+            <td>{{user.email}}</td>
+            <td>{{user.read ? "Yes" : "No"}}</td>
+            <td>{{user.write ? "Yes" : "No"}}</td>
+            <td>{{user.admin ? "Yes" : "No"}}</td>
+            <td><a class="text-primary" v-on:click="removeUser(user)">Remove</a></td>
+        </tr>
+        </tbody>
+        <tfoot>
+        <tr>
+            <td><input class="form-control" v-model="newUser.email" type="text" placeholder="email@example.com" autofocus></td>
+            <td><input class="form-control" v-model="newUser.read" type="checkbox"></td>
+            <td><input class="form-control" v-model="newUser.write" type="checkbox"></td>
+            <td><input class="form-control" v-model="newUser.admin" type="checkbox"></td>
+            <td><button class="btn btn-primary" v-on:click="addUser()">Add</button></td>
+        </tr>
+        </tfoot>
+    </table>
+    <div class="float-right" v-bind:style="{ display: hasChanges ? '' : 'none' }">
+        <button class="btn btn-primary" v-on:click="apply()">Apply</button>
+        <button class="btn btn-secondary" v-on:click="cancel()">Cancel</button>
+    </div>
+</div>
+{% endraw %}
+
+<script>
+    var user = {email: "", read: true, write: true, admin: false};
+    var users = [];
+    var vm_users = new Vue({
+        el : "#vmUsers",
+        data : {
+            users: users,
+            newUser: { ...user },
+            hasChanges: false
+        },
+        methods : {
+            loadUsers: function() {
+                var vm = this;
+                fetch("/list/user")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.users = [];
+                        vm.newUser.admin = false;
+                        for (const i in data) {
+                            var user = {
+                                email: data[i].email,
+                                read: data[i].permissions.includes("read"),
+                                write: data[i].permissions.includes("write"),
+                                admin: data[i].permissions.includes("admin")
+                            }
+                            vm.users.push(user)
+                        }
+                        vm.$forceUpdate();
+                    });
+            },
+            addUser: function() {
+                this.users.push(this.newUser);
+                this.newUser = { ...user };
+                this.hasChanges = true;
+                vm.$forceUpdate();
+            },
+            removeUser: function(user) {
+                var i = this.users.indexOf(user);
+                this.users.splice(i, 1);
+                this.hasChanges = true;
+                vm.$forceUpdate();
+            },
+            apply: function() {
+                var vm = this;
+                var data = [];
+                for (const i in vm.users) {
+                    var user = {
+                        email: vm.users[i].email,
+                        permissions: []
+                    };
+                    vm.users[i].read ? user.permissions.push('read') : null;
+                    vm.users[i].write ? user.permissions.push('write') : null;
+                    vm.users[i].admin ? user.permissions.push('admin') : null;
+                    data.push(user);
+                }
+                var requestOptions = {
+                    method: "PUT",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(data)
+                };
+                fetch("/users", requestOptions)
+                    .then(function() {
+                        vm.hasChanges = false;
+                    });
+            },
+            cancel: function() {
+                this.newUser = { ...user };
+                this.loadUsers();
+                this.hasChanges = false;
+            }
+        }
+    });
+    vm_users.loadUsers();
+</script>
+{% endblock %}

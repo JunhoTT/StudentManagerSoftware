@@ -1,0 +1,12 @@
+set AWS_ACCESS_KEY_ID=AKIAJS6E3AB5DHZZJT3A
+set AWS_SECRET_ACCESS_KEY=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
+set S3_BUCKET=m2m-demo
+set S3_REGION=us-east-2
+set FN_AUTH_REDIRECT_URI=http://localhost:5000/google/auth
+set FN_BASE_URI=http://localhost:5000
+set FN_CLIENT_ID=912353347348-gqp0m5vhppalampqp32iegs0ulalip12.apps.googleusercontent.com
+set FN_CLIENT_SECRET=ez5eKS9yM8aU-zkEgZ9Hs3vF
+set FLASK_DEBUG=1
+set DATABASE_URL=sqlite:///database.db
+set ADMIN_EMAIL=freedomflash8@gmail.com
+set SECRET_KEY=foobar

@@ -1,0 +1,12 @@
+export AWS_ACCESS_KEY_ID=AKIAJS6E3AB5DHZZJT3A
+export AWS_SECRET_ACCESS_KEY=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
+export S3_BUCKET=m2m-demo
+export S3_REGION=us-east-2
+export FN_AUTH_REDIRECT_URI=http://localhost:5000/google/auth
+export FN_BASE_URI=http://localhost:5000
+export FN_CLIENT_ID=912353347348-gqp0m5vhppalampqp32iegs0ulalip12.apps.googleusercontent.com
+export FN_CLIENT_SECRET=ez5eKS9yM8aU-zkEgZ9Hs3vF
+export FLASK_DEBUG=1
+export DATABASE_URL=sqlite:///database.db
+export ADMIN_EMAIL=freedomflash8@gmail.com
+export SECRET_KEY=foobar

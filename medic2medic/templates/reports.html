@@ -1,0 +1,1034 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% raw %}
+<h4>Reports</h4>
+
+<div id="menu">
+	<form id="select_report" @submit.prevent="processForm">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+		<select name="selected" id="selected" class="form-control" v-model="selected">
+		    <option disabled value="">Please select a report</option>
+			<option value="a">Student Contact Details</option>
+			<option value="b">Students with Laptops</option>
+			<option value="c">Students without Laptops</option>
+			<!--<option value="d">Students with Equipment</option>-->
+			<option value="e">Students without Equipment Pack</option>
+			<option value="f">Students without Books</option>
+			<option value="g">Students with Mentors</option>
+			<option value="h">Students without Mentors</option>
+			<option value="i">Latest Student Updates</option>
+			<option value="j">Students without Profiles</option>
+			<option value="k">Student Contracts To Be Signed</option>
+			<option value="l">Student Payments</option>
+			<option value="m">Student Payments Not Confirmed</option>
+			<option value="n">Tuition Payments</option>
+		</select>
+        </div>
+        <div class="col-auto">
+			<button name="submit" type="submit" class="btn btn-primary">Select</button>
+        </div>
+    </div>
+	</form>
+    <hr>
+</div>
+
+
+<div id="contact_report">
+    <div v-if="!isHidden">
+		<h5>Student Contact Details</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">First Name</th>
+				<th scope="col">Surname</th>
+				<th scope="col">University</th>
+				<th scope="col">Course</th>
+				<th scope="col">Status</th>
+				<th scope="col">Email</th>
+				<th scope="col">Contact Number</th>
+<!--			<th scope="col">Actions</th> -->
+			</tr>
+			</thead>
+			<tbody id="studentlist">
+			<tr v-for="student in students">
+				<td>{{student.firstname}}</td>
+				<td>{{student.surname}}</td>
+				<td>{{getUni(student.university)}}</td>
+				<td>{{student.course}}</td>
+				<td>{{student.status}}</td>
+				<td>{{student.email}}<br>{{student.email2}}</td>
+				<td>{{student.contactnumber}}<br>{{student.contactnumber2}}</td>
+<!--			<td>
+					<a v-bind:href="'/edit/student/'+ student.number">Edit</a>
+				</td> -->
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="laptop_report">
+    <div v-if="!isHidden">
+		<h5>Students with Laptops</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">Student</th>
+				<th scope="col">Laptop</th>
+				<th scope="col">Date Given</th>
+				<th scope="col">Comment</th>
+			</tr>
+			</thead>
+			<tbody id="profilelist">
+			<tr v-for="laptop in laptops">
+				<td>{{getStudent(laptop.id)}}</td>
+				<td>{{laptop.description}}</td>
+				<td>{{laptop.dategiven}}</td>
+				<td>{{laptop.comment}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="no_laptop_report">
+    <div v-if="!isHidden">
+		<h5>Students without Laptops</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">First Name</th>
+				<th scope="col">Surname</th>
+				<th scope="col">University</th>
+				<th scope="col">Course</th>
+				<th scope="col">Current Academic Year</th>
+			</tr>
+			</thead>
+			<tbody id="studentlist">
+			<tr v-for="student in students">
+				<td>{{student.firstname}}</td>
+				<td>{{student.surname}}</td>
+				<td>{{getUni(student.university)}}</td>
+				<td>{{student.course}}</td>
+				<td>{{student.currentacademicyear}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="equipment_report">
+    <div v-if="!isHidden">
+		<h5>Student Equipment</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">First Name</th>
+				<th scope="col">Surname</th>
+				<th scope="col">Pack</th>
+				<th scope="col">Pack Contents</th>
+			</tr>
+			</thead>
+			<tbody id="profilelist">
+			<tr v-for="student in students">
+				<td>{{student.firstname}}</td>
+				<td>{{student.surname}}</td>
+				<td>{{student.equipmentpack}}</td>
+				<td>{{getPackContents(student.equipmentpack)}}</td>
+				<td>{{getStudentContents(student)}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="no_equipment_report">
+    <div v-if="!isHidden">
+		<h5>Students without Equipment Pack</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">First Name</th>
+				<th scope="col">Surname</th>
+				<th scope="col">University</th>
+				<th scope="col">Course</th>
+				<th scope="col">Current Academic Year</th>
+			</tr>
+			</thead>
+			<tbody id="studentlist">
+			<tr v-for="student in students">
+				<td>{{student.firstname}}</td>
+				<td>{{student.surname}}</td>
+				<td>{{getUni(student.university)}}</td>
+				<td>{{student.course}}</td>
+				<td>{{student.currentacademicyear}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="no_book_report">
+    <div v-if="!isHidden">
+		<h5>Students without Books</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">First Name</th>
+				<th scope="col">Surname</th>
+				<th scope="col">University</th>
+				<th scope="col">Course</th>
+				<th scope="col">Current Academic Year</th>
+			</tr>
+			</thead>
+			<tbody id="studentlist">
+			<tr v-for="student in students">
+				<td>{{student.firstname}}</td>
+				<td>{{student.surname}}</td>
+				<td>{{getUni(student.university)}}</td>
+				<td>{{student.course}}</td>
+				<td>{{student.currentacademicyear}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="mentor_report">
+    <div v-if="!isHidden">
+		<h5>Students with Mentors</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">First Name</th>
+				<th scope="col">Surname</th>
+				<th scope="col">University</th>
+				<th scope="col">Course</th>
+				<th scope="col">Current Academic Year</th>
+				<th scope="col">Mentor Name</th>
+			</tr>
+			</thead>
+			<tbody id="studentlist">
+			<tr v-for="student in students">
+				<td>{{student.firstname}}</td>
+				<td>{{student.surname}}</td>
+				<td>{{getUni(student.university)}}</td>
+				<td>{{student.course}}</td>
+				<td>{{student.currentacademicyear}}</td>
+				<td>{{student.mentor}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="no_mentor_report">
+    <div v-if="!isHidden">
+		<h5>Students without Mentors</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">First Name</th>
+				<th scope="col">Surname</th>
+				<th scope="col">University</th>
+				<th scope="col">Course</th>
+				<th scope="col">Current Academic Year</th>
+				<th scope="col">Mentor Name</th>
+			</tr>
+			</thead>
+			<tbody id="studentlist">
+			<tr v-for="student in students">
+				<td>{{student.firstname}}</td>
+				<td>{{student.surname}}</td>
+				<td>{{getUni(student.university)}}</td>
+				<td>{{student.course}}</td>
+				<td>{{student.currentacademicyear}}</td>
+				<td>{{student.mentor}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="last_update_report">
+    <div v-if="!isHidden">
+		<h5>Student by Last Update Date</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">First Name</th>
+				<th scope="col">Surname</th>
+				<th scope="col">University</th>
+				<th scope="col">Course</th>
+				<th scope="col">Current Academic Year</th>
+				<th scope="col">Last Update Date</th>
+			</tr>
+			</thead>
+			<tbody id="studentlist">
+			<tr v-for="student in students">
+				<td>{{student.firstname}}</td>
+				<td>{{student.surname}}</td>
+				<td>{{getUni(student.university)}}</td>
+				<td>{{student.course}}</td>
+				<td>{{student.currentacademicyear}}</td>
+				<td>{{student.lateupdated}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="no_profile_report">
+    <div v-if="!isHidden">
+		<h5>Students without Profiles</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">First Name</th>
+				<th scope="col">Surname</th>
+				<th scope="col">University</th>
+				<th scope="col">Course</th>
+				<th scope="col">Status</th>
+				<th scope="col">Current Academic Year</th>
+				<th scope="col">Profile Update Date</th>
+			</tr>
+			</thead>
+			<tbody id="profilelist">
+			<tr v-for="student in students">
+				<td>{{student.firstname}}</td>
+				<td>{{student.surname}}</td>
+				<td>{{getUni(student.university)}}</td>
+				<td>{{student.course}}</td>
+				<td>{{student.status}}</td>
+				<td>{{student.currentacademicyear}}</td>
+				<td>{{student.updated}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="no_contract_report">
+    <div v-if="!isHidden">
+		<h5>Student Contracts To Be Signed</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">First Name</th>
+				<th scope="col">Surname</th>
+				<th scope="col">University</th>
+				<th scope="col">Course</th>
+				<th scope="col">Status</th>
+				<th scope="col">Date Scholarship Started</th>
+				<th scope="col">Contract</th>
+			</tr>
+			</thead>
+			<tbody id="profilelist">
+			<tr v-for="student in students">
+				<td>{{student.firstname}}</td>
+				<td>{{student.surname}}</td>
+				<td>{{getUni(student.university)}}</td>
+				<td>{{student.course}}</td>
+				<td>{{student.status}}</td>
+				<td>{{student.datestarted}}</td>
+				<td>{{student.signed}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="payment_report">
+    <div v-if="!isHidden">
+		<h5>All Student Payments</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">Student</th>
+				<th scope="col">Semester</th>
+				<th scope="col">Total Payment</th>
+				<th scope="col">Total MK</th>
+				<th scope="col">Payment Date</th>
+				<th scope="col">Received</th>
+			</tr>
+			</thead>
+			<tbody id="profilelist">
+			<tr v-for="payment in payments">
+				<td>{{getStudent(payment.id)}}</td>
+				<td>{{payment.semester}}</td>
+				<td>{{payment.totalpayment}}</td>
+				<td>{{payment.totalmk}}</td>
+				<td>{{payment.paymentdate}}</td>
+				<td>{{payment.received}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="no_payment_report">
+    <div v-if="!isHidden">
+		<h5>Student Payments Not Confirmed</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">Student</th>
+				<th scope="col">Semester</th>
+				<th scope="col">Total Payment</th>
+				<th scope="col">Total MK</th>
+				<th scope="col">Payment Date</th>
+				<th scope="col">Received</th>
+			</tr>
+			</thead>
+			<tbody id="profilelist">
+			<tr v-for="payment in payments">
+				<td>{{getStudent(payment.id)}}</td>
+				<td>{{payment.semester}}</td>
+				<td>{{payment.totalpayment}}</td>
+				<td>{{payment.totalmk}}</td>
+				<td>{{payment.paymentdate}}</td>
+				<td>{{payment.received}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="tuition_report">
+    <div v-if="!isHidden">
+		<h5>All Tuition Payments</h5>
+		<table class="table">
+			<thead>
+			<tr>
+				<th scope="col">Student</th>
+				<th scope="col">Year</th>
+				<th scope="col">Fee Structure</th>
+				<th scope="col">Partial Scholarship</th>
+				<th scope="col">Balance</th>
+				<th scope="col">Paid</th>
+			</tr>
+			</thead>
+			<tbody id="profilelist">
+			<tr v-for="tuition in tuitions">
+				<td>{{getStudent(tuition.id)}}</td>
+				<td>{{tuition.year}}</td>
+				<td>{{tuition.feestructure}}</td>
+				<td>{{tuition.partialscholarship}}</td>
+				<td>{{tuition.feebalance}}</td>
+				<td>{{tuition.feepaid}}</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<script>
+    var students = [];
+	var laptops = [];
+    var payments = [];
+    var tuitions = [];
+	var packs = [];
+	var unis = [];
+	var equip = [];
+
+    var vm_contact = new Vue({
+        el: "#contact_report",
+        data: {
+            isHidden: true,
+            students: students,
+			unis: unis,
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/reports/contact")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/university")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.unis = data;
+					});
+            },
+            getUni: function(u) {
+                for (record in this.unis) {
+                    if (this.unis[record].id == u) {
+                        return this.unis[record].uni_name;
+                    };
+                };
+            },
+        }
+    });
+
+    var vm_updates = new Vue({
+        el: "#last_update_report",
+        data: {
+            isHidden: true,
+            students: students,
+			unis: unis,
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/reports/updatedate")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+                        for (const i in data) {
+                            if (data[i].lateupdated != null) {
+                                data[i].lateupdated = data[i].lateupdated.split('T')[0];
+                                data[i].lateupdated = data[i].lateupdated.split(' ')[0];
+                            }
+                        }
+						vm.students = data;
+					});
+				fetch("/university")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.unis = data;
+					});
+            },
+            getUni: function(u) {
+                for (record in this.unis) {
+                    if (this.unis[record].id == u) {
+                        return this.unis[record].uni_name;
+                    };
+                };
+            },
+        }
+    });
+
+    var vm_no_contract = new Vue({
+        el: "#no_contract_report",
+        data: {
+            isHidden: true,
+            students: students,
+			unis: unis,
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/reports/nocontract")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/university")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.unis = data;
+					});
+            },
+            getUni: function(u) {
+                for (record in this.unis) {
+                    if (this.unis[record].id == u) {
+                        return this.unis[record].uni_name;
+                    };
+                };
+            },
+        }
+    });
+
+    var vm_no_profile = new Vue({
+        el: "#no_profile_report",
+        data: {
+            isHidden: true,
+            students: students,
+			unis: unis,
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/reports/noprofile")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/university")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.unis = data;
+					});
+            },
+            getUni: function(u) {
+                for (record in this.unis) {
+                    if (this.unis[record].id == u) {
+                        return this.unis[record].uni_name;
+                    };
+                };
+            },
+        }
+    });
+
+    var vm_mentor = new Vue({
+        el: "#mentor_report",
+        data: {
+            isHidden: true,
+            students: students,
+			unis: unis,
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/reports/mentor")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/university")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.unis = data;
+					});
+			},
+            getUni: function(u) {
+                for (record in this.unis) {
+                    if (this.unis[record].id == u) {
+                        return this.unis[record].uni_name;
+                    };
+                };
+            },
+        }
+    });
+
+    var vm_no_mentor = new Vue({
+        el: "#no_mentor_report",
+        data: {
+            isHidden: true,
+            students: students,
+			unis: unis,
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/reports/nomentor")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/university")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.unis = data;
+					});
+			},
+            getUni: function(u) {
+                for (record in this.unis) {
+                    if (this.unis[record].id == u) {
+                        return this.unis[record].uni_name;
+                    };
+                };
+            },
+        }
+    });
+
+    var vm_laptop = new Vue({
+        el: "#laptop_report",
+        data: {
+            isHidden: true,
+            students: students,
+			laptops: laptops
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/student/")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/reports/laptop")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+                        for (const i in data) {
+                            if (data[i].dategiven != null) {
+                                data[i].dategiven = data[i].dategiven.split('T')[0];
+                                data[i].dategiven = data[i].dategiven.split(' ')[0];
+                            }
+                        }
+						vm.laptops = data;
+					});
+			},
+            getStudent: function(s) {
+                for (record in this.students) {
+                    if (this.students[record].id == s) {
+                        return this.students[record].firstname.concat(" ".concat(this.students[record].surname));
+                    };
+                };
+				return s;
+            },
+        }
+    });
+
+    var vm_no_laptop = new Vue({
+        el: "#no_laptop_report",
+        data: {
+            isHidden: true,
+			students: students,
+			unis: unis,
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/reports/nolaptop")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/university")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.unis = data;
+					});
+			},
+            getUni: function(u) {
+                for (record in this.unis) {
+                    if (this.unis[record].id == u) {
+                        return this.unis[record].uni_name;
+                    };
+                };
+            },
+        }
+    });
+
+    var vm_equipment = new Vue({
+        el: "#equipment_report",
+        data: {
+            isHidden: true,
+            students: students,
+			packs: packs
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/reports/pack")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/list/equipmentpack")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.packs = data;
+					});
+			},
+            getPackContents: function(p) {
+				return this.packs[p].toString();
+            },
+			getStudentContents: function(student) {
+				var vm = this;
+				fetch('/student/{{student.id}}/equipment')  // This doesn't work
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.equip = data;
+					});
+					return vm.equip;
+			},
+        }
+    });
+
+    var vm_no_equipment = new Vue({
+        el: "#no_equipment_report",
+        data: {
+            isHidden: true,
+			students: students,
+			unis: unis,
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/reports/nopack")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/university")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.unis = data;
+					});
+			},
+            getUni: function(u) {
+                for (record in this.unis) {
+                    if (this.unis[record].id == u) {
+                        return this.unis[record].uni_name;
+                    };
+                };
+            },
+        }
+    });
+
+    var vm_no_book = new Vue({
+        el: "#no_book_report",
+        data: {
+            isHidden: true,
+			students: students,
+			unis: unis,
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/reports/nobook")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/university")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.unis = data;
+					});
+			},
+            getUni: function(u) {
+                for (record in this.unis) {
+                    if (this.unis[record].id == u) {
+                        return this.unis[record].uni_name;
+                    };
+                };
+            },
+        }
+    });
+	
+    var vm_payment = new Vue({
+        el: "#payment_report",
+        data: {
+            isHidden: true,
+            payments: payments,
+			students: students
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/student/")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/reports/payment")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+                        for (const i in data) {
+                            if (data[i].paymentdate != null) {
+                                data[i].paymentdate = data[i].paymentdate.split('T')[0];
+                                data[i].paymentdate = data[i].paymentdate.split(' ')[0];
+                            }
+                        }
+						vm.payments = data;
+					});
+			},
+            getStudent: function(s) {
+                for (record in this.students) {
+                    if (this.students[record].id == s) {
+                        return this.students[record].firstname.concat(" ".concat(this.students[record].surname));
+                    };
+                };
+				return s;
+            },
+        }
+    });
+	
+    var vm_no_payment = new Vue({
+        el: "#no_payment_report",
+        data: {
+            isHidden: true,
+            payments: payments,
+			students: students
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/student/")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/reports/nopayment")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+                        for (const i in data) {
+                            if (data[i].paymentdate != null) {
+                                data[i].paymentdate = data[i].paymentdate.split('T')[0];
+                                data[i].paymentdate = data[i].paymentdate.split(' ')[0];
+                            }
+                        }
+						vm.payments = data;
+					});
+			},
+            getStudent: function(s) {
+                for (record in this.students) {
+                    if (this.students[record].id == s) {
+                        return this.students[record].firstname.concat(" ".concat(this.students[record].surname));
+                    };
+                };
+				return s;
+            },
+        }
+    });
+	
+    var vm_tuition = new Vue({
+        el: "#tuition_report",
+        data: {
+            isHidden: true,
+            tuitions: tuitions,
+			students: students
+        },
+        methods: { 
+			update: function() {
+				var vm = this;
+				fetch("/student/")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.students = data;
+					});
+				fetch("/reports/tuition")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.tuitions = data;
+					});
+			},
+            getStudent: function(s) {
+                for (record in this.students) {
+                    if (this.students[record].id == s) {
+                        return this.students[record].firstname.concat(" ".concat(this.students[record].surname));
+                    };
+                };
+				return s;
+            },
+        }
+    });
+
+	var selected = '';
+    var vm_menu = new Vue({
+	    el: "#menu",
+		data: {
+		    selected: ''
+		},
+        methods : {
+            processForm: function () {
+                var vm = this;
+				vm_contact.isHidden = true;
+				vm_laptop.isHidden = true;
+				vm_no_laptop.isHidden = true;
+				vm_mentor.isHidden = true;
+				vm_no_mentor.isHidden = true;
+				vm_updates.isHidden = true;
+				vm_no_profile.isHidden = true;
+				vm_no_contract.isHidden = true;
+				vm_payment.isHidden = true;
+				vm_no_payment.isHidden = true;
+				vm_tuition.isHidden = true;
+				vm_equipment.isHidden = true;
+				vm_no_equipment.isHidden = true;
+				vm_no_book.isHidden = true;
+				if (vm.selected == 'a') {
+					vm_contact.isHidden = false;
+					vm_contact.update();
+				} else if (vm.selected == 'b') {
+					vm_laptop.isHidden = false;
+					vm_laptop.update();
+				} else if (vm.selected == 'c') {
+					vm_no_laptop.isHidden = false;
+					vm_no_laptop.update();
+				} else if (vm.selected == 'd') {
+					vm_equipment.isHidden = false;
+					vm_equipment.update();
+				} else if (vm.selected == 'e') {
+					vm_no_equipment.isHidden = false;
+					vm_no_equipment.update();
+				} else if (vm.selected == 'f') {
+					vm_no_book.isHidden = false;
+					vm_no_book.update();
+				} else if (vm.selected == 'g') {
+					vm_mentor.isHidden = false;
+					vm_mentor.update();
+				} else if (vm.selected == 'h') {
+					vm_no_mentor.isHidden = false;
+					vm_no_mentor.update();
+				} else if (vm.selected == 'i') {
+					vm_updates.isHidden = false;
+					vm_updates.update();
+				} else if (vm.selected == 'j') {
+					vm_no_profile.isHidden = false;
+					vm_no_profile.update();
+				} else if (vm.selected == 'k') {
+					vm_no_contract.isHidden = false;
+					vm_no_contract.update();
+				} else if (vm.selected == 'l') {
+					vm_payment.isHidden = false;
+					vm_payment.update();
+				} else if (vm.selected == 'm') {
+					vm_no_payment.isHidden = false;
+					vm_no_payment.update();
+				} else if (vm.selected == 'n') {
+					vm_tuition.isHidden = false;
+					vm_tuition.update();
+				}
+            }
+        }
+	});
+
+</script>
+{% endraw %}
+
+{% endblock %}

@@ -1,0 +1,12 @@
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.iml
+dist/
+build/
+.idea/
+.vscode/
+.DS_Store
+medic2medic/database.db
+database.db

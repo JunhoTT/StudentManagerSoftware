@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% raw %}
+<h4>Edit Book details</h4>
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">Book Details</a>
+    </div>
+</nav>
+
+<div class="tab-content" id="nav-tabContent">
+
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <br/>
+        <form id="editForm" @submit.prevent="processForm">
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Book Database ID</label>
+                <div class="col-8">
+                    <input id="id" name="id" type="text" class="form-control" v-model="book.id" disabled="disabled">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="title" class="col-4 col-form-label">Book Title</label>
+                <div class="col-8">
+                    <input id="title" name="book_title" type="text" class="form-control" v-model="book.title">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="author" class="col-4 col-form-label">Author</label>
+                <div class="col-8">
+                    <input id="author" name="book_title" type="text" class="form-control" v-model="book.author">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <div class="offset-4 col-8">
+                    <button name="submit" type="submit" class="btn btn-primary">Update and Return</button>
+                    <button onclick="javascript:vm_book.delete();" style="float:right" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endraw %}
+
+<script>
+    var book = {
+        book_title: '',
+        id: '{{id}}',
+        author: '',
+    };
+
+
+    var vm_book = new Vue({
+        el : "#editForm",
+        data : {book : book},
+        methods : {
+            loadBook: async function() {
+                var vm = this;
+                await fetch("/book/{{id}}")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.book = data;
+                    });
+            },
+            processForm: function () {
+                var vm = this;
+                var requestOptions = {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.book)
+                };
+                fetch("/book/", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        vm.response = data;
+                        window.location.href = "/list/books";
+                    });
+            },
+            delete: function () {
+                var vm = this;
+                var requestOptions = {
+                    method: "DELETE",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.book)
+                };
+                fetch("/book/{{id}}", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        window.location.href = "/list/books";
+                    });
+            }
+        }
+    });
+
+
+    main = async () => {
+        await vm_book.loadBook();
+
+    }
+    main();
+
+</script>
+
+{% endblock %}

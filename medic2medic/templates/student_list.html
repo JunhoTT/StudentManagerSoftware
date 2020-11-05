@@ -1,0 +1,179 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% raw %}
+<h4>Add New Student</h4>
+<div id="addform">
+<form @submit.prevent="processForm" ref="form">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            <label class="sr-only" for="addfirstname">Name</label>
+            <input type="text" class="form-control mb-2" id="addfirstname" placeholder="Enter first name" v-model="student.firstname">
+        </div>
+        <div class="col-auto">
+            <label class="sr-only" for="addlastname">Surname</label>
+            <input type="text" class="form-control mb-2" id="addlastname" placeholder="Enter last name" v-model="student.surname">
+        </div>
+        <div class="col-auto">
+            <label class="sr-only" for="addphone">Phone Number</label>
+            <input type="text" class="form-control mb-2" id="addphone" placeholder="Enter phone number" v-model="student.contactnumber">
+        </div>
+		<div class="col-auto">
+			<label class="sr-only" for="status">Status</label>
+			<select name="status" id="status" class="form-control mb-2" v-model="student.status">
+				<option value="current">Current</option>
+				<option value="prospective">Prospective</option>
+				<option value="graduate">Graduate</option>
+			</select>
+		</div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-2" >Add New Student</button>
+        </div>
+    </div>
+</form>
+</div>
+<hr>
+<h4>All Students</h4> <!-- <button class="btn btn-primary mb-2" onclick="javascript:vm1.update();">Refresh</button> -->
+
+<div id="studentlist">
+    <div>Search by first name (case sensitive): <input type="text" class="form-control mb-2" id="search" placeholder="Enter first name" oninput="javascript:vm1.update();"></div>
+    <table class="table" >
+        <thead>
+
+
+        <tr>
+            <th scope="col" @click="sort('firstname')">First Name</th>
+            <th scope="col" @click="sort('surname')">Surname</th>
+            <th scope="col" @click="sort('contactnumber')">Contact Number</th>
+            <th scope="col" @click="sort('university')">University</th>
+            <th scope="col" @click="sort('course')">Course</th>
+            <th scope="col" @click="sort('status')">Status</th>
+            <th scope="col">Actions</th>
+        </tr>
+        </thead>
+        <tbody >
+        <tr v-for="student in sortedStudents">
+            <td>{{student.firstname}}</td>
+            <td>{{student.surname}}</td>
+            <td>{{student.contactnumber}}</td>
+            <td>{{getUni(student.university)}}</td>
+            <td>{{student.course}}</td>
+            <td>{{student.status}}</td>
+            <td>
+                <a v-bind:href="'/edit/student/'+ student.id">Edit</a>
+            </td>
+
+
+        </tr>
+        </tbody>
+
+    </table>
+</div>
+<style>
+    th {
+  cursor:pointer;
+}
+</style>
+<script>
+
+    var student = {firstname:'', surname:'', contactnumber:'', course:'', id:'', status:'current'};
+    var students = [];
+	var unis = [];
+
+    var vm = new Vue({
+        el : "#addform",
+        data : {
+            student: student,
+        },
+        methods : {
+            processForm: function (event) {
+				if (!student.firstname.length) {
+						alert('Please enter a first name');
+				} else if (!student.surname.length) {
+						alert('Please enter a surname');
+				} else {
+					var payload = student;
+
+					var requestOptions = {
+						method: "POST",
+						headers: {"Content-Type": "application/json"},
+						body: JSON.stringify(payload)
+					};
+					fetch("/student/", requestOptions)
+						.then(function (response) {
+							return response.json();
+						})
+						.then(function (data) {
+							vm.response = data;
+							vm1.update();
+						});
+					event.target.reset();
+				}
+            },
+
+        }
+    });
+
+    var vm1 = new Vue({
+        el: "#studentlist",
+        data: {
+            students: students,
+			unis: unis,
+            currentSort:'firstname',
+            currentSortDir:'asc',
+        },
+        computed:{
+            sortedStudents:function() {
+
+                var searchtext = document.getElementById("search").value;
+				
+                this.students = this.students.filter((x)=>x.firstname.match(searchtext));
+
+                return this.students.sort((a,b) => {
+                    let modifier = 1;
+                    if(this.currentSortDir === 'desc') modifier = -1;
+                    if(a[this.currentSort] < b[this.currentSort]) return -1 * modifier;
+                    if(a[this.currentSort] > b[this.currentSort]) return 1 * modifier;
+                    return 0;
+                });
+            }
+        },
+        methods: {
+            update: function() {
+                var vm = this;
+                fetch("/student")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.students = data;
+                    });
+				fetch("/university")
+					.then(function(response) {
+						return response.json();
+					})
+					.then(function(data) {
+						vm.unis = data;
+					});
+            },
+            sort: function(s) {
+                if(s === this.currentSort) {
+                  this.currentSortDir = this.currentSortDir==='asc'?'desc':'asc';
+                }
+                this.currentSort = s;
+            },
+			getUni: function(u) {
+				for (record in this.unis) {
+					if (this.unis[record].id == u) {
+						return this.unis[record].uni_name;
+					};
+				};
+			},
+        }
+    });
+    
+    vm1.update()
+</script>
+{% endraw %}
+
+{% endblock %}

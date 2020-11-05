@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% raw %}
+<h4>Universities</h4>
+<!-- https://scotch.io/courses/getting-started-with-vuejs/processing-a-form-with-vue -->
+<div id="addform">
+<form @submit.prevent="processForm" ref="form">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            <label class="sr-only" for="inlineFormInput">uni_name</label>
+            <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Uni name" v-model="uni.uni_name">
+        </div>
+        <div class="col-auto">
+            <label class="sr-only" for="inlineFormInput">Surname</label>
+            <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Country" v-model="uni.country">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-2" >Add New University</button>
+        </div>
+    </div>
+</form>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">id</th>
+        <th scope="col">uni_name</th>
+        <th scope="col">country</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody id="unilist">
+    <tr v-for="uni in unilist">
+        <td>{{uni.id}}</td>
+        <td>{{uni.uni_name}}</td>
+        <td>{{uni.country}}</td>
+        <td>
+            <a v-bind:href="'/edit/university/'+ uni.id">Edit</a>
+        </td>
+
+    </tr>
+    </tbody>
+
+</table>
+
+<script>
+    var uni = {id:'', uni_name:'', country:''};
+    var unilist = [];
+    var vm = new Vue({
+        el : "#addform",
+        data : {uni : uni},
+        methods : {
+            processForm: function () {
+                var payload = uni;
+
+                var requestOptions = {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(payload)
+                };
+                fetch("/university/", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        vm.response = data;
+                        vm1.update();
+                    });
+
+            }
+        }
+    });
+
+    var vm1 = new Vue({
+        el: "#unilist",
+        data: {
+            unilist: unilist
+        },
+        methods: {
+            update: function() {
+                var vm = this;
+                fetch("/university")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.unilist = data;
+                    });
+            }
+        }
+    });
+    
+    vm1.update()
+</script>
+{% endraw %}
+
+{% endblock %}

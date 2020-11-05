@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% raw %}
+<h4>Courses</h4>
+<!-- https://scotch.io/courses/getting-started-with-vuejs/processing-a-form-with-vue -->
+<div id="addform">
+<form @submit.prevent="processForm" ref="form">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            <label class="sr-only" for="inlineFormInput">course_name</label>
+            <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Course name" v-model="course.course_name">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-2" >Add New Course</button>
+        </div>
+    </div>
+</form>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">id</th>
+        <th scope="col">course_name</th>
+        <th scope="col"></th>
+    </tr>
+    </thead>
+    <tbody id="courselist">
+    <tr v-for="course in courselist">
+        <td>{{course.id}}</td>
+        <td>{{course.course_name}}</td>
+
+        <td>
+            <a v-bind:href="'/edit/course/'+ course.id">Edit</a>
+        </td>
+
+    </tr>
+    </tbody>
+
+</table>
+
+<script>
+    var course = {id:'', course_name:''};
+    var courselist = [];
+    var vm = new Vue({
+        el : "#addform",
+        data : {course : course},
+        methods : {
+            processForm: function () {
+                var payload = course;
+
+                var requestOptions = {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(payload)
+                };
+                fetch("/course/", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        vm.response = data;
+                        vm1.update();
+                    });
+
+            }
+        }
+    });
+
+    var vm1 = new Vue({
+        el: "#courselist",
+        data: {
+            courselist: courselist
+        },
+        methods: {
+            update: function() {
+                var vm = this;
+                fetch("/course")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.courselist = data;
+                    });
+            }
+        }
+    });
+    
+    vm1.update()
+</script>
+{% endraw %}
+
+{% endblock %}

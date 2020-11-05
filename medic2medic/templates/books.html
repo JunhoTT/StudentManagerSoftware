@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% raw %}
+<h4>Books</h4>
+
+<div id="addform">
+<form @submit.prevent="processForm" ref="form">
+    <div class="form-row align-items-center">
+        <div class="col-auto">
+            <label class="sr-only" for="inlineFormInput">Book Title</label>
+            <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Book title" v-model="book.title">
+        </div>
+        <div class="col-auto">
+            <label class="sr-only" for="inlineFormInput">Author</label>
+            <input type="text" class="form-control mb-2" id="inlineFormInput" placeholder="Book Author" v-model="book.author">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary mb-2" >Add New Book</button>
+        </div>
+    </div>
+</form>
+</div>
+
+<table class="table">
+    <thead>
+    <tr>
+        <th scope="col">ID</th>
+        <th scope="col">Book title</th>
+        <th scope="col">Author</th>
+
+
+
+    </tr>
+    </thead>
+    <tbody id="booklist">
+    <tr v-for="book in booklist">
+        <td>{{book.id}}</td>
+        <td>{{book.title}}</td>
+        <td>{{book.author}}</td>
+        <td>
+            <a v-bind:href="'/edit/book/'+ book.id">Edit</a>
+        </td>
+
+    </tr>
+    </tbody>
+
+</table>
+
+<script>
+    var book = {
+        id:'',
+        title:'',
+        author:'',
+    };
+
+    var booklist = [];
+
+    var vm = new Vue({
+        el : "#addform",
+        data : {book : book},
+        methods : {
+            processForm: function () {
+                var payload = book;
+
+                var requestOptions = {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(payload)
+                };
+                fetch("/book/", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        vm.response = data;
+                        vm1.update();
+                    });
+
+            }
+        }
+    });
+
+    var vm1 = new Vue({
+        el: "#booklist",
+        data: {
+            booklist: booklist
+        },
+        methods: {
+            update: function() {
+                var vm = this;
+                fetch("/book")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.booklist = data;
+                    });
+            }
+        }
+    });
+    
+    vm1.update()
+</script>
+{% endraw %}
+
+{% endblock %}

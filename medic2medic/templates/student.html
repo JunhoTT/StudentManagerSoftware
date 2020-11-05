@@ -1,0 +1,1482 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% raw %}
+<h4 id="title">
+    Edit Student : {{student.firstname}} {{student.surname}}
+</h4>
+
+<nav>
+    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+        <a class="nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">General  Details</a>
+        <a class="nav-link" id="nav-enrolment-tab" data-toggle="tab" href="#nav-enrolment" role="tab" aria-controls="nav-enrolment" aria-selected="false">Enrolment Details</a>
+        <a class="nav-link" id="nav-financial-tab" data-toggle="tab" href="#nav-financial" role="tab" aria-controls="nav-financial" aria-selected="false">Financial Details</a>
+        <a class="nav-link" id="nav-Fees-tab" data-toggle="tab" href="#nav-fees" role="tab" aria-controls="nav-Fees" aria-selected="false">Fees & scholarships</a>
+        <a class="nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-equipment" role="tab" aria-controls="nav-contact" aria-selected="false">Equipment</a>
+        <a class="nav-link" id="nav-other-tab" data-toggle="tab" href="#nav-other" role="tab" aria-controls="nav-other" aria-selected="false">Other</a>
+        <a class="nav-link" id="nav-manage-tab" data-toggle="tab" href="#nav-manage" role="tab" aria-controls="nav-manage" aria-selected="false">Manage</a>
+    </div>
+</nav>
+<div class="tab-content" id="nav-tabContent">
+
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+        <br/>
+        <form id="editForm" @submit.prevent="processForm">
+
+			<!-- Take this out when you're finished -->
+            <div class="form-group row">
+                <label for="studentid" class="col-4 col-form-label">ID</label>
+                <div class="col-8">
+                    <input id="studentid" name="studentid" type="hidden" class="form-control" v-model="student.id">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="number" class="col-4 col-form-label">Registration Number</label>
+                <div class="col-8">
+                    <input id="number" name="number" type="text" class="form-control" v-model="student.number">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="firstname" class="col-4 col-form-label">First name</label>
+                <div class="col-8">
+                    <input id="firstname" name="firstname" type="text" class="form-control" v-model="student.firstname">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="surname" class="col-4 col-form-label">Surname</label>
+                <div class="col-8">
+                    <input id="surname" name="surname" type="text" class="form-control" v-model="student.surname">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="status" class="col-4 col-form-label">Status</label>
+                <div class="col-8">
+
+                    <select name="status" id="status" class="form-control" v-model="student.status">
+                        <option value="current">Current</option>
+                        <option value="prospective">Prospective</option>
+                        <option value="graduate">Graduate</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="email" class="col-4 col-form-label">Email</label>
+                <div class="col-8">
+                    <input id="email" name="email" type="text" class="form-control" v-model="student.email">
+                </div>
+            </div>
+			<div class="form-group row">
+				<label for="email2" class="col-4 col-form-label">Secondary Email</label>
+				<div class="col-8">
+					<input id="email2" name="email2" type="text" class="form-control" v-model="student.email2">
+				</div>
+			</div>
+            <div class="form-group row">
+                <label for="contactnumber" class="col-4 col-form-label">Contact Number</label>
+                <div class="col-8">
+                    <input id="contactnumber" name="contactnumber" type="text" class="form-control" v-model="student.contactnumber">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="contactnumber2" class="col-4 col-form-label">Other Phone Numbers</label>
+                <div class="col-8">
+                    <input id="contactnumber2" name="contactnumber2" type="text" class="form-control" v-model="student.contactnumber2">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="offset-4 col-8">
+                    <button name="submit" type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <div class="tab-pane fade" id="nav-enrolment" role="tabpanel" aria-labelledby="nav-enrolment-tab">
+        <div id="editEnrolmentVm">
+            <br/>
+            <form id="editEnrolment" @submit.prevent="processForm">
+
+            <div class="form-group row">
+                <label for="course" class="col-4 col-form-label">Course</label>
+                <div class="col-8">
+
+                    <select name="course" id="course" class="form-control" v-model="student.course">
+                        <option value="none">None (Default)</option>
+                        <option v-for="course in courses" :value="course.course_name">{{ course.course_name }}</option>
+                    </select>
+                </div>
+
+            </div>
+<!--            <div class="form-group row">
+                <label for="country" class="col-4 col-form-label">Country</label>
+                <div class="col-8">
+                    <select name="country" id="country" class="form-control" v-model="student.country">
+                        <option value="none">None (Default)</option>
+                        <option value="country1">Country 1</option>
+                        <option value="country2">Country 2</option>
+                        <option value="country3">Country 3</option>
+                        <option value="country4">Country 4</option>
+                    </select>
+                </div>
+            </div> -->
+            <div class="form-group row">
+                <label for="university" class="col-4 col-form-label">University</label>
+                <div class="col-8">
+                    <select name="university" id="university" class="form-control" v-model="student.university">
+                        <option value="none">None (Default)</option>
+                        <option v-for="uni in unis" :value="uni.id">{{ uni.uni_name }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <label for="currentacademicyear" class="col-4 col-form-label">Current Academic Year</label>
+                <div class="col-8">
+                    <input id="currentacademicyear" name="currentacademicyear" type="text" class="form-control" v-model="student.currentacademicyear">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="mentor" class="col-4 col-form-label">Mentor</label>
+                <div class="col-8">
+                    <input id="mentor" name="mentor" type="text" class="form-control" v-model="student.mentor">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="mentormatchdate" class="col-4 col-form-label">Mentor match date</label>
+                <div class="col-8">
+                    <input id="mentormatchdate" name="mentormatchdate" type="date" maxlength="10" placeholder="yyyy-mm-dd" class="form-control" v-model="student.mentormatchdate">
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="offset-4 col-8">
+                    <button name="submit" type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </form>
+		</div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-financial" role="tabpanel" aria-labelledby="nav-financial-tab">
+        <div id="editBankVm">
+            <br/>
+            <form id="editFinancial" @submit.prevent="processForm">
+
+                <div class="form-group row">
+                    <label for="bank" class="col-4 col-form-label">Bank</label>
+                    <div class="col-8">
+                        <input id="bank" name="bank" type="text" class="form-control" v-model="student.bank">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="servicecentre" class="col-4 col-form-label">Service Centre</label>
+                    <div class="col-8">
+                        <input id="servicecentre" name="servicecentre" type="text" class="form-control" v-model="student.servicecentre">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="account" class="col-4 col-form-label">Account Number</label>
+                    <div class="col-8">
+                        <input id="account" name="account" type="text" class="form-control" v-model="student.account">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="swift" class="col-4 col-form-label">Swift Number</label>
+                    <div class="col-8">
+                        <input id="swift" name="swift" type="text" class="form-control" v-model="student.swift">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="fdh" class="col-4 col-form-label">Added to FDH Online / One Click ?</label>
+                    <div class="col-8">
+                        <input id="fdh" name="fdh" type="text" class="form-control" v-model="student.fdh">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="offset-4 col-8">
+                        <button name="submit_financial" type="submit" class="btn btn-primary">Update</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <br><h5>Payments</h5>
+        <div id="editPaymentsVm">
+            <table class="table" v-bind:style="{ display: !showEditing ? '' : 'none' }">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Semester</th>
+                        <th scope="col">Stationery Allowance</th>
+                        <th scope="col">Living Allowance</th>
+                        <th scope="col">Uniform Allowance</th>
+                        <th scope="col">Transport Allowance</th>
+                        <th scope="col">Total Payment</th>
+                        <th scope="col">Total MK</th>
+                        <th scope="col">Confirmed Received</th>
+                        <th scope="col">Payment Date</th>
+                        <th scope="col">Comment</th>
+                        <th scope="col"><button class="btn btn-success" v-on:click="newPayment()">Add</button></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="payment in payments">
+                        <td>{{payment.id}}</td>
+                        <td>{{payment.semester}}</td>
+                        <td>{{payment.stationery}}</td>
+                        <td>{{payment.living}}</td>
+                        <td>{{payment.uniform}}</td>
+                        <td>{{payment.transport}}</td>
+                        <td>{{payment.totalpayment}}</td>
+                        <td>{{payment.totalmk}}</td>
+                        <td>{{payment.received ? "Yes" : "No"}}</td>
+                        <td>{{payment.paymentdate}}</td>
+                        <td>{{payment.comment}}</td>
+                        <td>
+                            <button class="btn btn-primary" v-on:click="editPayment(payment)">Edit</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div v-bind:style="{ display: showEditing ? '' : 'none' }">
+                <div class="form-group row">
+                    <label for="semester" class="col-4 col-form-label">Semester</label>
+                    <div class="col-8">
+                        <input id="semester" name="semester" type="text" class="form-control" v-model="payment.semester">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="stationery" class="col-4 col-form-label">Stationery Allowance</label>
+                    <div class="col-8">
+                        <input id="stationery" name="stationery" type="text" class="form-control" v-model="payment.stationery">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="living" class="col-4 col-form-label">Living Allowance</label>
+                    <div class="col-8">
+                        <input id="living" name="living" type="text" class="form-control" v-model="payment.living">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="uniform" class="col-4 col-form-label">Uniform Allowance</label>
+                    <div class="col-8">
+                        <input id="uniform" name="uniform" type="text" class="form-control" v-model="payment.uniform">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="transport" class="col-4 col-form-label">Transport Allowance</label>
+                    <div class="col-8">
+                        <input id="transport" name="transport" type="text" class="form-control" v-model="payment.transport">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="totalpayment" class="col-4 col-form-label">Total Payment</label>
+                    <div class="col-8">
+                        <input id="totalpayment" name="totalpayment" type="text" class="form-control" v-model="payment.totalpayment">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="totalmk" class="col-4 col-form-label">Total MK</label>
+                    <div class="col-8">
+                        <input id="totalmk" name="totalmk" type="text" class="form-control" v-model="payment.totalmk">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="received" class="col-4 col-form-label">Confirmed Received</label>
+                    <div class="col-8">
+                        <input id="received" name="received" type="checkbox" class="form-control form-check-input" v-model="payment.received">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="paymentdate" class="col-4 col-form-label">Payment Date</label>
+                    <div class="col-8">
+						<input id="paymentdate" name="paymentdate" type="date" maxlength="10" placeholder="yyyy-mm-dd" class="form-control" v-model="payment.paymentdate">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="comment" class="col-4 col-form-label">Comment</label>
+                    <div class="col-8">
+                        <input id="comment" name="comment" type="text" class="form-control" v-model="payment.comment">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="offset-4 col-8" v-bind:style="{ display: showNew ? 'none' : '' }">
+                        <button class="btn btn-primary" v-on:click="updatePayment()">Update</button>
+                        <button class="btn btn-secondary" v-on:click="showEditing = false">Cancel</button>
+                        <button class="btn btn-danger float-right" v-on:click="deletePayment()">Delete</button>
+                    </div>
+                    <div class="offset-4 col-8" v-bind:style="{ display: showNew ? '' : 'none' }">
+                        <button class="btn btn-primary" v-on:click="addPayment()">Add</button>
+                        <button class="btn btn-secondary" v-on:click="showEditing = false">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-fees" role="tabpanel" aria-labelledby="nav-Fees-tab">
+        <br/>
+        <form id="editFeesScholarships" @submit.prevent="processForm">
+            <div class="form-group row">
+                <label for="dateStarted" class="col-4 col-form-label">Date Scholarship Started</label>
+                <div class="col-8">
+                    <input id="dateStarted" name="dateStarted" type="date" maxlength="10" placeholder="yyyy-mm-dd" class="form-control" v-model="student.dateStarted">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="signed" class="col-4 col-form-label">Contract Signed</label>
+                <div class="col-8">
+                    <select name="signed" id="signed" class="form-control" v-model="student.signed">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                        <option value="tosign">To Be Signed</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="sponsored" class="col-4 col-form-label">Self or Government Sponsored</label>
+                <div class="col-8">
+                    <select name="sponsored" id="sponsored" class="form-control" v-model="student.sponsored">
+                        <option value="self">Self Sponsored</option>
+                        <option value="govt">Government Sponsored</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="fees" class="col-4 col-form-label">Government Loan for Fees</label>
+                <div class="col-8">
+                    <select name="fees" id="fees" class="form-control" v-model="student.fees">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="upkeep" class="col-4 col-form-label">Government Loan for Upkeep</label>
+                <div class="col-8">
+                    <select name="upkeep" id="upkeep" class="form-control" v-model="student.upkeep">
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group row">
+                <div class="offset-4 col-8">
+                    <button name="submit" type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </form>
+        <br><h5>Tuition Fees</h5>
+        <div id="editTuitionVm">
+            <table class="table" v-bind:style="{ display: !showEditing ? '' : 'none' }">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Year</th>
+                        <th scope="col">Fee Structure</th>
+                        <th scope="col">Partial Scholarship</th>
+                        <th scope="col">Fee Balance</th>
+                        <th scope="col">Paid</th>
+                        <th scope="col"><button class="btn btn-success" v-on:click="newTuition()">Add</button></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="tuition in tuitions">
+                        <td>{{tuition.id}}</td>
+                        <td>{{tuition.year}}</td>
+                        <td>{{tuition.feestructure}}</td>
+                        <td>{{tuition.partialscholarship}}</td>
+                        <td>{{tuition.feebalance}}</td>
+                        <td>{{tuition.feepaid}}</td>
+                        <td>
+                            <button class="btn btn-primary" v-on:click="editTuition(tuition)">Edit</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div v-bind:style="{ display: showEditing ? '' : 'none' }">
+                <div class="form-group row">
+                    <label for="year" class="col-4 col-form-label">Year</label>
+                    <div class="col-8">
+                        <input id="year" name="year" type="text" class="form-control" v-model="tuition.year">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="feestructure" class="col-4 col-form-label">Fee Structure</label>
+                    <div class="col-8">
+                        <input id="feestructure" name="feestructure" type="text" class="form-control" v-model="tuition.feestructure">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="partialscholarship" class="col-4 col-form-label">Partial Scholarship</label>
+                    <div class="col-8">
+                        <input id="partialscholarship" name="partialscholarship" type="text" class="form-control" v-model="tuition.partialscholarship">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="feebalance" class="col-4 col-form-label">Fee Balance</label>
+                    <div class="col-8">
+                        <input id="feebalance" name="feebalance" type="text" class="form-control" v-model="tuition.feebalance">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="feebalance" class="col-4 col-form-label">Fee Paid</label>
+                    <div class="col-8">
+						<select name="feepaid" id="feepaid" class="form-control" v-model="tuition.feepaid">
+							<option value="yes">Yes</option>
+							<option value="no">No</option>
+						</select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="offset-4 col-8" v-bind:style="{ display: showNew ? 'none' : '' }">
+                        <button class="btn btn-primary" v-on:click="updateTuition()">Update</button>
+                        <button class="btn btn-secondary" v-on:click="showEditing = false">Cancel</button>
+                        <button class="btn btn-danger float-right" v-on:click="deleteTuition()">Delete</button>
+                    </div>
+                    <div class="offset-4 col-8" v-bind:style="{ display: showNew ? '' : 'none' }">
+                        <button class="btn btn-primary" v-on:click="addTuition()">Add</button>
+                        <button class="btn btn-secondary" v-on:click="showEditing = false">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-equipment" role="tabpanel" aria-labelledby="nav-contact-tab">
+        <br>
+        <h5>Laptops</h5>
+        <div id="editLaptopsVm">
+            <table class="table" v-bind:style="{ display: !showEditing ? '' : 'none' }">
+                <thead>
+                    <tr>
+                        <th scope="col">Description</th>
+                        <th scope="col">Date Given</th>
+                        <th scope="col">Comment</th>
+                        <th scope="col"><button class="btn btn-success" v-on:click="newLaptop()">Add</button></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="laptop in laptops">
+                        <td>{{laptop.description}}</td>
+                        <td>{{laptop.dategiven}}</td>
+                        <td>{{laptop.comment}}</td>
+                        <td>
+                            <button class="btn btn-primary" v-on:click="editLaptop(laptop)">Edit</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div v-bind:style="{ display: showEditing ? '' : 'none' }">
+                <div class="form-group row">
+                    <label for="description" class="col-4 col-form-label">Description</label>
+                    <div class="col-8">
+                        <input id="description" name="description" type="text" class="form-control" v-model="laptop.description">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="dategiven" class="col-4 col-form-label">Date Given</label>
+                    <div class="col-8">
+						<input id="dategiven" name="dategiven" type="date" maxlength="10" placeholder="yyyy-mm-dd" class="form-control" v-model="laptop.dategiven">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="comment" class="col-4 col-form-label">Comment</label>
+                    <div class="col-8">
+                        <input id="comment" name="comment" type="text" class="form-control" v-model="laptop.comment">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <div class="offset-4 col-8" v-bind:style="{ display: showNew ? 'none' : '' }">
+                        <button class="btn btn-primary" v-on:click="updateLaptop()">Update</button>
+                        <button class="btn btn-secondary" v-on:click="showEditing = false">Cancel</button>
+                        <button class="btn btn-danger float-right" v-on:click="deleteLaptop()">Delete</button>
+                    </div>
+                    <div class="offset-4 col-8" v-bind:style="{ display: showNew ? '' : 'none' }">
+                        <button class="btn btn-primary" v-on:click="addLaptop()">Add</button>
+                        <button class="btn btn-secondary" v-on:click="showEditing = false">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <h5>Books</h5>
+        <div id="editBooksVm">
+            <table class="table" v-bind:style="{ display: !showEditing ? '' : 'none' }">
+                <thead>
+                    <tr>
+                        <!--<th scope="col">#</th>-->
+                        <th scope="col">Title</th>
+
+                        <th scope="col"><button class="btn btn-success" v-on:click="newBook()">Add</button></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="assignedBook in assignedBooks">
+                        <!--<td>{{assignedBook.id}}</td>-->
+                        <td>{{assignedBook.title}}</td>
+                        <td>
+                            <button class="btn btn-primary" v-on:click="editBook(book)">Edit</button>
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+            <div v-bind:style="{ display: showEditing ? '' : 'none' }">
+                <div class="form-group row">
+                    <label for="course" class="col-4 col-form-label">Book</label>
+                    <div class="col-8">
+
+                        <select name="assignedBook" id="assignedBook" class="form-control" v-model="assignedBook.title">
+
+                            <option v-for="book in books" :value="book.title">{{ book.title }}</option>
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <label for="dategivenBook" class="col-4 col-form-label">Date Given</label>
+                    <div class="col-8">
+						<input id="dategivenBook" name="dategivenBook" type="date" maxlength="10" placeholder="yyyy-mm-dd" class="form-control" v-model="book.dategiven">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="offset-4 col-8" v-bind:style="{ display: showNew ? 'none' : '' }">
+                        <button class="btn btn-primary" v-on:click="updateBook()">Update</button>
+                        <button class="btn btn-secondary" v-on:click="showEditing = false">Cancel</button>
+                        <button class="btn btn-danger float-right" v-on:click="deleteBook()">Delete</button>
+                    </div>
+                    <div class="offset-4 col-8" v-bind:style="{ display: showNew ? '' : 'none' }">
+                        <button class="btn btn-primary" v-on:click="addBook()">Add</button>
+                        <button class="btn btn-secondary" v-on:click="showEditing = false">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <div id="editEquipmentVm">
+            <h5 class="d-inline align-middle">Equipment Pack:</h5>    
+            <div class="btn-group align-middle">
+                <button type="button" class="btn dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{temp.equipmentPack}}
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" v-on:click="temp.equipmentPack = equipmentPack; changeSelection();" v-for="equipmentPack in Object.keys(equipmentPacks).sort()">
+                        {{equipmentPack}}
+                    </a>
+                </div>
+            </div>
+            <br>
+            <table class="table" v-bind:style="{ display: temp.equipment.length > 0 ? '' : 'none' }">
+                <thead>
+                <tr>
+                    <th>Equipment</th>
+                    <th>Delivered to Student</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr v-for="item in temp.equipment">
+                    <td>{{item.name}}</td>
+                    <td>
+                        <input type="checkbox" class="form-control form-check-input position-static" v-model="item.included">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <br>
+            <div class="float-right" >
+                <button class="btn btn-primary" v-on:click="applyChanges()">Update Equipment Pack</button>
+                <button class="btn btn-secondary" v-on:click="cancelChanges()">Cancel</button>
+                <p></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="tab-pane fade" id="nav-other" role="tabpanel" aria-labelledby="nav-other-tab">
+        <div id="editOtherVm">
+            <br><h5>Other</h5>
+            <div>
+                <div class="form-group row">
+                    <label for="updated" class="col-4 col-form-label">Profile Updated On</label>
+                    <div class="col-8">
+						<input id="updated" name="updated" type="date" maxlength="10" placeholder="yyyy-mm-dd" class="form-control" v-model="temp.updated">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="lateupdated" class="col-4 col-form-label">Late Update Date</label>
+                    <div class="col-8">
+						<input id="lateupdated" name="lateupdated" type="date" maxlength="10" placeholder="yyyy-mm-dd" class="form-control" v-model="temp.lateupdated">
+                    </div>
+                </div>
+            </div>
+
+            <br><h5>Files</h5>
+            <div class="container d-flex h-100">
+                <img v-bind:src="iconSrc" width="100" height="100" alt="Student's Icon" v-on:error="iconSrc='/static/default_icon.png'">
+                <label class="btn btn-secondary">
+                    Upload Student Icon
+                    <input id="user_icon_file" type="file" v-on:change="updateIcon()"/>
+                </label>
+                <div class="spinner-border align-middle" role="status" v-if="uploadingIcon">
+                    <span class="sr-only">Loading...</span>
+                </div>
+            </div>
+
+
+            <br><h5>Quotes</h5>
+            <div class="input-group md-3">
+                <input id="newQuote" type="text" class="form-control">
+                <div class="input-group-append">
+                    <button class="btn btn-success" v-on:click="addQuote()">Add</button>
+                </div>
+            </div>
+            <br>
+            <div class="float-right" v-bind:style="{ visibility: hasChanges() ? 'visible' : 'hidden' }">
+                <button class="btn btn-primary" v-on:click="applyChanges()">Save Changes</button>
+                <button class="btn btn-secondary" v-on:click="cancelChanges()">Cancel</button>
+                <p></p>
+            </div>
+            <br>
+            <div v-for="quote in temp.quotes">
+                <br v-bind:style="{ display: temp.quotes.indexOf(quote) > 0 ? '' : 'none' }">
+                <div class="input-group md-3">
+					<textarea rows="1" class="form-control" v-model="temp.quotes[temp.quotes.indexOf(quote)]"></textarea>
+                    <div class="input-group-append">
+                        <button class="btn btn-danger" v-on:click="removeQuote(quote)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="tab-pane fade" id="nav-manage" role="tabpanel" aria-labelledby="nav-manage">
+        <br/>
+        <form id="delstudent" @submit.prevent="processForm">
+
+            <div class="form-group row">
+                <label for="studentidData" class="col-4 col-form-label">Database ID</label>
+                <div class="col-8">
+                    <input id="studentidData" name="studentid" type="text" class="form-control" v-model="student.id" disabled="disabled">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="offset-4 col-8">
+                    <div id="delbutton"><button v-on:click="vm_del.delete()" style="float:right" class="btn btn-danger">Delete Student</button></div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+
+
+
+{% endraw %}
+<style>
+label[for="studentid"]
+{
+   display:none;
+}
+input[type="file"] {
+    display: none;
+}
+</style>
+<script src="/static/awsS3Access.js"></script>
+<script>
+    var student = {
+        id: '{{studentNumber}}',//
+        firstname: '',
+        email: '',
+        email2: '',
+        //number: '{{studentNumber}}',
+        number: '',//
+        surname: '',
+        equipmentpack: null,
+        updated: '',
+        lateupdated: '',
+        bank:'',
+        servicecentre:'',
+        account:'',
+        swift:'',
+
+        contactnumber:'',
+        contactnumber2:'',
+        course:'',
+        country:'',
+        university:'',
+        currentacademicyear:'',
+        mentor:'',
+        mentormatchdate:'',
+        status:'',
+    };
+    var payment = {
+        id: null,
+        studentid: '{{studentNumber}}'-0,
+        semester: '',
+        stationery: '',
+        living: '',
+        uniform: '',
+        transport: '',
+        totalpayment: '',
+        totalmk: '',
+        received: false,
+        paymentdate: '',
+        comment: ''
+    };
+    var payments = [];
+    var tuition = {
+        id: null,
+        studentid: '{{studentNumber}}'-0,
+        year: '',
+        feestructure: '',
+        partialscholarship: '',
+        feebalance: '',
+		feepaid: ''
+    };
+    var tuitions = [];
+
+    var laptop = {
+        id: null,
+        studentid: '{{studentNumber}}'-0,
+        description: '',
+        dategiven: '',
+        comment: '',
+    };
+    var laptops = [];
+
+    var books = [];
+    var book = {
+        id: null,
+        title: '',
+        author: '',
+    };
+    var assignedBooks = [];
+    var assignedBook = {
+        id: null,
+        title: '',
+        dategiven: '',
+        studentid: '{{studentNumber}}'-0,
+    };
+
+
+    var item = {
+        name: '',
+        included: true
+    };
+
+
+    var equipment = [];
+    var equipmentPacks = {
+        None: []
+    };
+    uni = {country: '', id: '', uni_name: ''}
+    unis = [];
+
+    course = {id: '', course_name: ''}
+    courses = [];
+
+    var vm_del = new Vue({
+        el : "#delstudent",
+        data : {student : student},
+        methods : {
+            delete: function () {
+                var vm = this;
+                var requestOptions = {
+                    method: "DELETE",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.student)
+                };
+                fetch("/student/{{studentNumber}}", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        window.location.href = "/list/students";
+                    });
+            },
+            loadStudent: async function() {
+                var vm = this;
+                await fetch("/student/{{studentNumber}}")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.student = data;
+                    });
+            },
+        }
+    });
+
+    var vm_student = new Vue({
+        el : "#editForm",
+//        data : {student : student, unis: unis, courses: courses},
+        data : {student : student},
+        methods : {
+            loadStudent: async function() {
+                var vm = this;
+                await fetch("/student/{{studentNumber}}")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.student = data;
+                    });
+            },
+            processForm: function () {
+                var vm = this;
+                var requestOptions = {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.student)
+                };
+                fetch("/student/", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        vm.response = data;
+					alert("Changes saved");
+                    });
+            }
+        }
+    });
+
+    var vm_title = new Vue({
+	    el : "#title",
+		data : {student : student}
+	});
+
+    var vm_enrolment = new Vue({
+        el : "#editEnrolmentVm",
+        data : {student : student, unis: unis, courses: courses},
+        methods : {
+            processForm: function () {
+                var vm = this;
+                var requestOptions = {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.student)
+                };
+                fetch("/student/", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        vm.response = data;
+					alert("Changes saved");
+                    });
+            },
+            updateUnis: async function() {
+                var vm = this;
+                await fetch("/university/")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.unis = data;
+                    });
+            },
+            updateCourses: async function() {
+                var vm = this;
+                await fetch("/course/")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.courses = data;
+                    });
+            },
+
+        }
+    });
+
+
+    var vm_bank = new Vue({
+        el : "#editBankVm",
+        data : {student : student},
+        methods : {
+            processForm: function () {
+                var vm = this;
+                var requestOptions = {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.student)
+                };
+                fetch("/student/", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        vm.response = data;
+					alert("Changes saved");
+                    });
+            }
+        }
+    });
+
+    var vm_payment = new Vue({
+        el : "#editPaymentsVm",
+        data : {
+            payments : payments,
+            payment : payment,
+            showEditing: false,
+            showNew: false
+        },
+        methods : {
+            loadPayments: function() {
+                var vm = this;
+                fetch("/student/{{studentNumber}}/payments")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        for (const i in data) {
+                            if (data[i].paymentdate != null) {
+                                data[i].paymentdate = data[i].paymentdate.split('T')[0];
+                                data[i].paymentdate = data[i].paymentdate.split(' ')[0];
+                            }
+                        }
+                        vm.payments = data;
+                    });
+            },
+            newPayment: function() {
+                this.payment = { ...payment }
+                this.showEditing = true;
+                this.showNew = true;
+            },
+            addPayment: function() {
+                var vm = this;
+                var requestOptions = {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.payment)
+                };
+                fetch("/payment", requestOptions)
+                    .then(function(response) {
+                        vm.loadPayments();
+                        vm.showEditing = false;
+                    });
+            },
+            editPayment: function(payment) {
+                this.payment = { ...payment };
+                this.showEditing = true;
+                this.showNew = false;
+            },
+            updatePayment: function() {
+                var vm = this;
+                var requestOptions = {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.payment)
+                };
+                fetch("/payment/"+vm.payment.id, requestOptions)
+                    .then(function(response) {
+                        vm.loadPayments();
+                        vm.showEditing = false;
+                    });
+            },
+            deletePayment: function() {
+                var vm = this;
+                fetch("/payment/"+vm.payment.id, { method: "DELETE" })
+                    .then(function(response) {
+                        vm.loadPayments()
+                        vm.showEditing = false;
+                    });
+            }
+        }
+    });
+
+    var vm_fees = new Vue({
+        el : "#editFeesScholarships",
+        data : {student : student},
+        methods : {
+            processForm: function () {
+                var vm = this;
+                var requestOptions = {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.student)
+                };
+                fetch("/student/", requestOptions)
+                    .then(function (response) {
+                        return response.json();
+                    })
+                    .then(function (data) {
+                        vm.response = data;
+					alert("Changes saved");
+                    });
+            }
+        }
+    });
+
+    var vm_tuition = new Vue({
+        el : "#editTuitionVm",
+        data : {
+            tuitions : tuitions,
+            tuition : tuition,
+            showEditing: false,
+            showNew: false
+        },
+        methods : {
+            loadTuitions: function() {
+                var vm = this;
+                fetch("/student/{{studentNumber}}/tuitions")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.tuitions = data;
+                    });
+            },
+            newTuition: function() {
+                this.tuition = { ...tuition }
+                this.showEditing = true;
+                this.showNew = true;
+            },
+            addTuition: function() {
+                var vm = this;
+                var requestOptions = {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.tuition)
+                };
+                fetch("/tuition", requestOptions)
+                    .then(function(response) {
+                        vm.loadTuitions();
+                        vm.showEditing = false;
+                    });
+            },
+            editTuition: function(tuition) {
+                this.tuition = { ...tuition };
+                this.showEditing = true;
+                this.showNew = false;
+            },
+            updateTuition: function() {
+                var vm = this;
+                var requestOptions = {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.tuition)
+                };
+                fetch("/tuition/"+vm.tuition.id, requestOptions)
+                    .then(function(response) {
+                        vm.loadTuitions();
+                        vm.showEditing = false;
+                    });
+            },
+            deleteTuition: function() {
+                var vm = this;
+                fetch("/tuition/"+vm.tuition.id, { method: "DELETE" })
+                    .then(function(response) {
+                        vm.loadTuitions()
+                        vm.showEditing = false;
+                    });
+            }
+        }
+    });
+
+    var vm_laptop = new Vue({
+        el : "#editLaptopsVm",
+        data : {
+            laptops : laptops,
+            laptop : laptop,
+            showEditing: false,
+            showNew: false
+        },
+        methods : {
+            loadLaptops: function() {
+                var vm = this;
+                fetch("/student/{{studentNumber}}/laptops")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        for (const i in data) {
+                            if (data[i].dategiven != null) {
+                                data[i].dategiven = data[i].dategiven.split('T')[0];
+                                data[i].dategiven = data[i].dategiven.split(' ')[0];
+                            }
+                        }
+                        vm.laptops = data;
+                    });
+            },
+            newLaptop: function() {
+                this.laptop = { ...laptop }
+                this.showEditing = true;
+                this.showNew = true;
+            },
+            addLaptop: function() {
+                var vm = this;
+                var requestOptions = {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.laptop)
+                };
+                fetch("/laptop", requestOptions)
+                    .then(function(response) {
+                        vm.loadLaptops();
+                        vm.showEditing = false;
+                    });
+            },
+            editLaptop: function(laptop) {
+                this.laptop = { ...laptop };
+                this.showEditing = true;
+                this.showNew = false;
+            },
+            updateLaptop: function() {
+                var vm = this;
+                var requestOptions = {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.laptop)
+                };
+                fetch("/laptop/"+vm.laptop.id, requestOptions)
+                    .then(function(response) {
+                        vm.loadLaptops();
+                        vm.showEditing = false;
+                    });
+            },
+            deleteLaptop: function() {
+                var vm = this;
+                fetch("/laptop/"+vm.laptop.id, { method: "DELETE" })
+                    .then(function(response) {
+                        vm.loadLaptops()
+                        vm.showEditing = false;
+                    });
+            }
+        }
+    });
+
+    var vm_book = new Vue({
+        el : "#editBooksVm",
+        data : {
+            books : books,
+            book : book,
+            assignedBook : assignedBook,
+            assignedBooks : assignedBooks,
+            showEditing: false,
+            showNew: false
+        },
+        methods : {
+            loadBooks: function() {
+                var vm = this;
+                fetch("/book/")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        vm.books = data;
+                    });
+
+            },
+            loadAssignedBooks: function() {
+                var vm = this;
+                fetch("/student/{{studentNumber}}/assignedBooks")
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        for (const i in data) {
+                            if (data[i].dategiven != null) {
+                                data[i].dategiven = data[i].dategiven.split('T')[0];
+                                data[i].dategiven = data[i].dategiven.split(' ')[0];
+                            }
+                        }
+                        vm.assignedBooks = data;
+                    });
+            },
+            newBook: function() {
+                this.book = { ...book }
+                this.showEditing = true;
+                this.showNew = true;
+            },
+            addBook: function() {
+                var vm = this;
+                var requestOptions = {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.assignedBook)
+                };
+                fetch("/assignedBooks", requestOptions)
+                    .then(function(response) {
+                        vm.loadBooks();
+                        vm.loadAssignedBooks()
+                        vm.showEditing = false;
+                    });
+            },
+            editBook: function(book) {
+                this.book = { ...book };
+                this.showEditing = true;
+                this.showNew = false;
+            },
+            updateBook: function() {
+                var vm = this;
+                var requestOptions = {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.assignedBook)
+                };
+                fetch("/assignedBooks/"+vm.assignedBook.id, requestOptions)
+                    .then(function(response) {
+                        vm.loadBooks();
+                        vm.loadAssignedBooks()
+                        vm.showEditing = false;
+                    });
+            },
+            deleteBook: function() {
+                var vm = this;
+                fetch("/assignedBooks/"+vm.assignedBook.id, { method: "DELETE" })
+                    .then(function(response) {
+                        vm.loadBooks()
+                        vm.loadAssignedBooks()
+                        vm.showEditing = false;
+                    });
+            }
+        }
+    });
+
+
+    var vm_equipment = new Vue({
+        el : "#editEquipmentVm",
+        data : {
+            student: student,
+            equipmentPacks: equipmentPacks,
+            real: {
+                equipment: equipment,
+                equipmentPack: 'None'
+            },
+            temp: {
+                equipment: equipment,
+                equipmentPack: 'None'
+            }
+        },
+        methods : {
+            loadEquipment: function(student) {
+                var vm = this;
+                vm.student = student;
+                vm.real.equipmentPack = student.equipmentpack != null ? student.equipmentpack : 'None'
+                fetch('/list/equipmentpack')
+                    .then(function(response) {
+                        return response.json();
+                    })
+                    .then(function(data) {
+                        for (const i in data) {
+                            data[i].sort();
+                        }
+                        vm.equipmentPacks = data;
+                        vm.equipmentPacks.None = [];
+                    })
+                    .then(async function() {
+                        fetch('/student/{{studentNumber}}/equipment')
+                            .then(function(response) {
+                                return response.json()
+                            })
+                            .then(function(data) {
+                                var newEquipment = [];
+                                var items = vm.equipmentPacks[vm.real.equipmentPack];
+                                for (const i in items) {
+                                    newEquipment.push({ name: items[i], included: data.includes(items[i]) });
+                                }
+                                vm.real.equipment = newEquipment;
+                                vm.cancelChanges();
+                            });
+                    });
+            },
+            hasChanges: function() {
+                if (this.temp.equipment.length != this.real.equipment.length
+                    || this.temp.equipmentPack != this.real.equipmentPack) {
+                    return true;
+                }
+                for (const i in this.temp.equipment) {
+                    if (this.temp.equipment[i].name != this.real.equipment[i].name
+                        || this.temp.equipment[i].included != this.real.equipment[i].included) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            applyChanges: function() {
+                this.real.equipment = [];
+                for (const i in this.temp.equipment) {
+                    this.real.equipment.push({ ...(this.temp.equipment[i]) });
+                }
+                this.real.equipmentPack = this.temp.equipmentPack;
+                
+                this.student.equipmentpack = this.real.equipmentPack != 'None' ? this.equipmentPack : null;
+                fetch("/student/{{studentNumber}}/equipmentpack/"+this.real.equipmentPack, { method: "PATCH" });
+                
+                var body = [];
+                for (const i in this.real.equipment) {
+                    if (this.real.equipment[i].included) {
+                        body.push(this.real.equipment[i].name);
+                    }
+                }
+                var requestOptions = {
+                    method: "PUT",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(body)
+                };
+                fetch("/student/{{studentNumber}}/equipment", requestOptions)
+            },
+            cancelChanges: function() {
+                this.temp.equipment = [];
+                for (const i in this.real.equipment) {
+                    this.temp.equipment.push({ ...(this.real.equipment[i]) });
+                }
+                this.temp.equipmentPack = this.real.equipmentPack;
+            },
+            changeSelection: function() {
+                var contents = this.equipmentPacks[this.temp.equipmentPack];
+                this.temp.equipment = [];
+                for (const i in contents) {
+                    this.temp.equipment.push({ name: contents[i], included: true });
+                }
+            }
+        }
+    });
+
+    var vm_other = new Vue({
+        el : "#editOtherVm",
+        data : {
+            student: student,
+            iconSrc: 'https://{{s3Bucket}}.s3.amazonaws.com/student/{{studentNumber}}/icon',
+            uploadingIcon: false,
+            uploadingFiles: false,
+            real: {
+                updated: '',
+                lastupdated: '',
+                quotes: []
+            },
+            temp: {
+                updated: '',
+                lateupdated: '',
+                quotes: []
+            }
+        },
+        methods : {
+            updateIcon: function() {
+                var vm = this;
+                vm.uploadingIcon = true;
+                var file = document.getElementById("user_icon_file").files[0];
+                // var namebits = file.name.split();
+                file = new File([file], 'student/{{studentNumber}}/icon', {type: file.type});
+                if (file) {
+                    uploadFile(file, function(url) {
+                        vm.iconSrc = url;
+                        vm.uploadingIcon = false;
+                    });
+                }
+            },
+            loadQuotes: function() {
+                var vm = this;
+                fetch('/student/{{studentNumber}}/quotes')
+                    .then(function(response) {
+                        return response.json()
+                    })
+                    .then(function(data) {
+                        vm.real.quotes = data
+                        vm.temp.quotes = [ ...data ]
+                    });
+            },
+            loadDates: function(student) {
+                this.student = student;
+                this.real.updated = student.updated == null ? '' : student.updated.split('T')[0];
+                this.real.lateupdated = student.lateupdated == null ? '' : student.lateupdated.split('T')[0];
+                this.temp.updated = student.updated == null ? '' : student.updated.split('T')[0];
+                this.temp.lateupdated = student.lateupdated == null ? '' : student.lateupdated.split('T')[0];
+            },
+            addQuote: function() {
+                var input = document.getElementById('newQuote');
+                this.temp.quotes.push(input.value);
+                input.value = '';
+            },
+            removeQuote: function(quote) {
+                var quotes = this.temp.quotes;
+                quotes.splice(quotes.indexOf(quote), 1);
+            },
+            hasChanges: function() {
+                if (this.temp.quotes.length != this.real.quotes.length
+                    || this.temp.updated != this.real.updated
+                    || this.temp.lateupdated != this.real.lateupdated) {
+                    return true;
+                }
+                for (const i in this.temp.quotes) {
+                    if (!this.real.quotes.includes(this.temp.quotes[i])) {
+                        return true;
+                    }
+                }
+                return false;
+            },
+            applyChanges: function() {
+                var vm = this;
+
+                var requestOptions = {
+                    method: "PUT",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.temp.quotes)
+                };
+                fetch('/student/{{studentNumber}}/quotes', requestOptions)
+                    .then(function() {
+                        vm.loadQuotes();
+                    });
+
+                var requestOptions = {
+                    method: "PATCH",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({
+                        updated: this.temp.updated,
+                        lateupdated: this.temp.updated
+                    })
+                }
+                fetch('/student/{{studentNumber}}/dates', requestOptions)
+                    .then(function() {
+                        vm.student.updated = vm.temp.updated;
+                        vm.real.updated = vm.temp.updated;
+                        vm.student.lateupdated = vm.temp.lateupdated;
+                        vm.real.lateupdated = vm.temp.lateupdated;
+                    });
+                },
+                cancelChanges: function() {
+                    this.temp.quotes = [ ...this.real.quotes ]
+                    this.temp.updated = this.real.updated;
+                    this.temp.lateupdated = this.real.lateupdated;
+            }
+        }
+    });
+
+    main = async () => {
+
+        await vm_student.loadStudent();
+        vm_enrolment.updateUnis();
+        vm_enrolment.updateCourses();
+        vm_del.loadStudent();
+		vm_title.student = vm_student.student;
+        vm_enrolment.student = vm_student.student;
+        vm_bank.student = vm_student.student;
+        vm_payment.loadPayments();
+        vm_fees.student = vm_student.student;
+        vm_tuition.loadTuitions();
+        vm_laptop.loadLaptops();
+        vm_book.loadBooks();
+        vm_book.loadAssignedBooks();
+        vm_equipment.loadEquipment(vm_student.student);
+        vm_other.loadQuotes();
+        vm_other.loadDates(vm_student.student);
+
+
+
+
+    }
+    main();
+
+</script>
+
+{% endblock %}

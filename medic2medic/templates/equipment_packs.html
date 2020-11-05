@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% raw %}
+<h4>Equipment Packs</h4>
+<div id="vmEquipmentPack">
+    <div class="input-group md-3">
+        <input id="new-pack-field-id" type="text" class="form-control">
+        <div class="input-group-append">
+            <button class="btn btn-secondary" v-on:click="addPack()">Start new Equipment Pack</button>
+        </div>
+    </div>
+    <br>
+    <div v-for="(contents, pack) in temp">
+        <hr>
+        {{pack}}
+        <a class="text-primary float-right" v-on:click="toggleShown(pack)">
+            {{show[pack] ? 'Hide' : 'Show'}}
+        </a>
+        <div v-bind:style="{ display: show[pack] ? '' : 'none' }">
+            <hr>
+            <p class="col-12" v-for="content in contents">
+                {{content}}
+                <!-- <button class="btn btn-danger float-right" v-on:click="removeEquipment(pack, content)">Delete</button> -->
+                <a class="text-primary float-right" v-on:click="removeEquipment(pack, content)">Remove</a>
+                <br>
+            </p>
+            <div class="col-12 input-group md-3">
+                <input v-bind:id="'new-pack-'+pack+'-group-field-id'" type="text" class="form-control">
+                <div class="input-group-append">
+                    <button class="btn btn-primary" v-on:click="addEquipment(pack)">Add Equipment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="float-right">
+        <button class="btn btn-primary" v-on:click="apply()">Finalise Changes</button>
+        <button class="btn btn-secondary" v-on:click="cancel()">Cancel</button>
+    </div>
+</div>
+{% endraw %}
+
+<script>
+    var vm_equipment_pack = new Vue({
+        el: "#vmEquipmentPack",
+        data: {
+            real: {},
+            temp: {},
+            show: {}
+        },
+        methods: {
+            loadEquipmentPacks: function() {
+                var vm = this;
+                fetch('/list/equipmentpack')
+                    .then(function(response) {
+                        return response.json()
+                    })
+                    .then(function(data) {
+                        for (const key in data) {
+                            vm.real[key] = [ ...data[key] ];
+                            vm.temp[key] = [ ...data[key] ];
+                            vm.show[key] = false;
+                            vm.$forceUpdate();
+                        }
+                    });
+            },
+            toggleShown: function(pack) {
+                this.show[pack] = !this.show[pack];
+                this.$forceUpdate();
+            },
+            removePack: function(pack) {
+                delete this.temp[pack];
+                delete this.show[pack];
+            },
+            removeEquipment: function(pack, content) {
+                this.temp[pack].splice(this.temp[pack].indexOf(content), 1);
+                this.$forceUpdate();
+            },
+            addPack: function() {
+                var field = document.getElementById("new-pack-field-id");
+                msg = "The pack " + field.value + " already exists, do you want to replace it?"
+                if (field.value != "" && (this.temp[field.value] == undefined || confirm(msg))) {
+                    this.temp[field.value] = [];
+                    this.show[field.value] = true;
+                    field.value = "";
+                    this.$forceUpdate();
+                }
+            },
+            addEquipment: function(pack) {
+                var field = document.getElementById("new-pack-"+pack+"-group-field-id");
+                if (field.value != "" && !this.temp[pack].includes(field.value)) {
+                    this.temp[pack].push(field.value);
+                    this.temp[pack].sort();
+                    field.value = "";
+                    this.$forceUpdate();
+                }
+            },
+            hasChanges: function() {
+                
+            },
+            apply: function() {
+                var vm = this;
+                url = "/equipmentpack/checkchanges";
+                var requestOptions = {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify(vm.temp)
+                };
+                fetch(url, requestOptions)
+                    .then(function(response) {
+                        return response.json()
+                    })
+                    .then(function(data) {
+                        if (data.result > 0) {
+                            msg = "This change will alter " + data.result
+                                + " student" + (data.result > 1 ? "s" : "")
+                                + ", are you sure you wish to continue?";
+                            if (!confirm(msg)) {
+                                return
+                            }
+                        }
+                        for (pack in vm.temp) {
+                            url = "/equipmentpack/" + pack + "/contents";
+                            requestOptions = {
+                                method: "PUT",
+                                headers: {"Content-Type": "application/json"},
+                                body: JSON.stringify(vm.temp[pack])
+                            };
+                            var putContents = function() {
+                                fetch(url, requestOptions);
+                            }
+                            if (vm.real[pack] == undefined) {
+                                fetch("/equipmentpack/" + pack, { method: "POST" })
+                                    .then(putContents);
+                            } else {
+                                putContents();
+                            }
+                        }
+                        for (const key in vm.temp) {
+                            vm.real[key] = [ ...vm.temp[key] ];
+                        }
+                        vm.$forceUpdate();
+                    });
+            },
+            cancel: function() {
+                this.temp = {};
+                for (const key in this.real) {
+                    this.temp[key] = [ ...this.real[key] ];
+                    if (this.show[key] == undefined) {
+                        this.show[key] = false;
+                    }
+                }
+                this.$forceUpdate();
+            }
+        }
+    });
+
+    vm_equipment_pack.loadEquipmentPacks();
+</script>
+{% endblock %}
